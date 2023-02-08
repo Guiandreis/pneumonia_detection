@@ -16,6 +16,8 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+
+
 IMG_SIZE = 224
 val_transform = A.Compose(
     [        
@@ -39,14 +41,15 @@ def get_model(path):
     print('model loaded')
     return model.eval()
 
-path = 'C:/Users/Felipe/Desktop/Projetos/Data Science/Chest_Pneumonia/model_pneumonia_resnet18.pt'
+path = 'model_path\model_pneumonia_resnet18.pt'
 model = get_model(path)
 
 @app.route('/predict', methods = ['POST'])
 @cross_origin()
-
 def predict():
+    print('entrou post1')
     message = request.get_json(force = True)
+    print('entrou post2')
     #print('message',message)
     encoded = message['image']
     decoded = base64.b64decode(encoded)    

@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>Pneumonia detection Result</title>
+    <style>
+      .field {
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+      }
+      .field-name {
+        font-weight: bold;
+        color: gray;
+      }
+
+    </style>
+  </head>
+  <body>
+    {% for key, value in data.items() %}
+      <div class="field">
+        <div class="field-name">{{ key }} : {{ value }} </div>
+      </div>
+    {% endfor %}
+  </body>
+</html>
