@@ -13,5 +13,5 @@
 ![batch_result](/images_read_me/batch_result_final.png)
 
 
-![flask_api](/images_read_me/flask_api.png)
-![results_api](/images_read_me/results_api.png)
+![flask_api](/images_read_me/flask_api.PNG)
+![results_api](/images_read_me/results_api.PNG)
