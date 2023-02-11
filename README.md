@@ -13,6 +13,4 @@
 ![confusion matrix ](/images_read_me/confusion_matrix3.png)
 ![batch_result](/images_read_me/batch_result_final.png)
 
-
-![flask_api](/images_read_me/flask_api.PNG)
 ![results_api](/images_read_me/results_api.PNG)
