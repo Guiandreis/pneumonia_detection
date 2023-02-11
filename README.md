@@ -4,7 +4,7 @@
 
 Created a deep learning neural network (DLNN) that classifies Chest X-Rays images within normal an pneumonia categories to help medical diagnosis in time and assertieness.
 Developed a FLASK API to serve as interface with users.
-![flask api](/images_read_me/flask_api1.PNG) ![results_api](/images_read_me/results_api.PNG)
+![flask api](/images_read_me/flask_api2.PNG) ![results_api](/images_read_me/results_api2.PNG)
 
 
 In order to reach the best result the DLNN used a ResNet18 backbone and was trained using the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia). The figures below show the results of the confusion matrix and a batch of the test dataset used to train the network.
