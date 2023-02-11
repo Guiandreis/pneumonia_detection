@@ -4,6 +4,7 @@
 
 Created a deep learning neural network (DLNN) that classifies Chest X-Rays images within normal an pneumonia categories to help medical diagnosis in time and assertieness.
 Developed a FLASK API to serve as interface with users.
+
 ![flask api](/images_read_me/flask_api2.PNG) ![results_api](/images_read_me/result_api2.PNG)
 
 
@@ -13,6 +14,7 @@ In order to reach the best result the DLNN used a ResNet18 backbone and was trai
 ![batch_result](/images_read_me/batch_result_final.png)
 
 In order to make the DLNN more explainable to physicians the Gradcam was developed to try to demonstrate what parts of the images the DLNN is "looking" and atribuiting greater weights in the classification results, the input image and the highlighted points by the model with Gradcam is shown bellow.
+
 ![Original image](/images_read_me/cheast_image1.png)
 ![Gradcam over image](/images_read_me/gradcam_heatmap1.png)
 
