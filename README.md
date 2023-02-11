@@ -8,7 +8,7 @@
 ![results_api](/images_read_me/results_api.PNG)
 
 
-- In order to reach the best result the neural network used a ResNet18 backbone and was treined using the ![kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)
+- In order to reach the best result the neural network used a ResNet18 backbone and was treined using the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)
 - Using Gradcam to access in the understanding of highlighted points by the model.
 
 
