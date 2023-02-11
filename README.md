@@ -12,9 +12,9 @@
 - Using Gradcam to access in the understanding of highlighted points by the model.
 
 
-[Original image](/images_read_me/cheast_image1.png)
-[Gradcam over image](/images_read_me/gradcam_heatmap1.png)
-[confusion matrix ](/images_read_me/confusion_matrix3.png)
-[batch_result](/images_read_me/batch_result_final.png)
+![Original image](/images_read_me/cheast_image1.png)
+![Gradcam over image](/images_read_me/gradcam_heatmap1.png)
+![confusion matrix ](/images_read_me/confusion_matrix3.png)
+![batch_result](/images_read_me/batch_result_final.png)
 
 
