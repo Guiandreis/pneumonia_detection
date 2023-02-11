@@ -16,8 +16,6 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-
-
 IMG_SIZE = 224
 val_transform = A.Compose(
     [        
@@ -25,16 +23,25 @@ val_transform = A.Compose(
         A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
     ]
 )
-def preprocess_image(image):
+def preprocess_image(message):
     ''' Preprocess and transform image to NN'''
-    
+
+    encoded = message['image']
+    decoded = base64.b64decode(encoded)   
+    image = io.BytesIO(decoded)
+    image.seek(0)
+    image = np.asarray(bytearray(image.read()), dtype=np.uint8)
+    image = cv2.imdecode(image,0)
+    image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)    
     image = val_transform(image = image)['image']
     image = torch.from_numpy(image).unsqueeze(0)
     image_preprocessed = np.transpose(image,(0,3,1,2))
+
     return image_preprocessed
 
 def get_model(path):
     ''' LOAD MODEL '''
+
     print('load model')
     model = load_model.resnet18model()
     model.load_state_dict(torch.load(path))
@@ -49,22 +56,7 @@ model = get_model(path)
 def predict():
     print('entrou post1')
     message = request.get_json(force = True)
-    print('entrou post2')
-    #print('message',message)
-    encoded = message['image']
-    decoded = base64.b64decode(encoded)    
-    #image = cv2.imread(decoded)
-    #print('decoded',decoded)
-    print('decoded type',type(decoded))
-    image = io.BytesIO(decoded)
-    image.seek(0)
-    image = np.asarray(bytearray(image.read()), dtype=np.uint8)
-    image = cv2.imdecode(image,0)
-    image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
-    #image = Image.open(io.BytesIO(decoded))
-    print('image.type',type(np.array(image)))
-    print('image shpae',np.array(image).shape)
-    preprocessed_image = preprocess_image(np.array(image))
+    preprocessed_image = preprocess_image(np.array(message))
     prediction = model(preprocessed_image)
     pred_probs = torch.softmax(prediction, dim=1).data.numpy()
     
