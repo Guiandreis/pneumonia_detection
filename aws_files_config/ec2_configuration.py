@@ -58,7 +58,7 @@ def find_or_create_key_pair_locally(ec2_client, KEY_PAIR_NAME):
     return
 
 
-def get_list_instances_and_start_selected(ec2_resource, INSTANCE_NAME):
+def list_instances_and_start_selected(ec2_resource, INSTANCE_NAME):
     '''Function to list instances and start selected one by name'''
 
     there_is_instance = False
@@ -169,7 +169,7 @@ def ec2_config():
         ec2_client,dict_create_instance['KEY_PAIR_NAME']
         )
 
-    there_is_instance, correct_instance = get_list_instances_and_start_selected(
+    there_is_instance, correct_instance = list_instances_and_start_selected(
         ec2_resource,dict_create_instance['INSTANCE_NAME']
         )
     

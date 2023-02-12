@@ -1,7 +1,27 @@
 import boto3
 
-def list_buckets(s3_client, name_s3_client = ''):
+def input_paths_and_names():
+    '''This function is the input data for all the info and paths'''
 
+    dict_input_info = {
+        'bucket_region' : 'us-east-1',
+        'NAME_S3_BUCKET' : 'gra-porfolio-bucket2',
+        'folders_required' : ['config_folder', 'input_folder', 'output_folder'],
+  
+    }
+
+    dict_configuration_files = {
+        'model_path' : 'model_path\model_pneumonia_resnet18.pt',
+        #'image_preprocess_file' : '',# TO DO
+        'load_modl_file' : 'load_model.py',
+        'requirements_file' : 'requirements.txt'
+
+    }
+    return dict_input_info, dict_configuration_files
+
+
+def check_bucket_existence(s3_client, name_s3_client = ''):
+    '''This function list all existing buckets and check for existent one'''
     buckets = s3_client.list_buckets()['Buckets']
     
     BUCKET_ALREADY_EXISTS = False
@@ -14,11 +34,8 @@ def list_buckets(s3_client, name_s3_client = ''):
 
     return BUCKET_ALREADY_EXISTS
 
-s3_client = boto3.client('s3')
-
-list_buckets(s3_client)
-
 def create_bucket(s3_client, name_s3_bucket= ''):
+    '''Create bucket if desired one doesnt exists'''
 
     print('name_s3_bucket',name_s3_bucket)
     s3_client.create_bucket(
@@ -29,18 +46,75 @@ def create_bucket(s3_client, name_s3_bucket= ''):
 
     return
 
+def list_folders_in_bucket(s3_client, NAME_S3_BUCKET):
+    '''this function list all the folders in the bucket'''
+
+    folders_list = s3_client.list_objects(
+        Bucket = NAME_S3_BUCKET, Delimiter = '/'
+        )
+    if "CommonPrefixes" in folders_list:
+        existent_folders = [
+            folder['Prefix'] for folder in folders_list['CommonPrefixes']]
+        
+        return existent_folders
+    else:
+        return []
+
+def check_if_required_folders_exists_ifnot_create(
+    s3_client, NAME_S3_BUCKET, existent_folders, folders_required
+    ):
+    '''This function verify if all folders exists, if not create them'''
+
+    for folder in folders_required:
+        if folder not in existent_folders:
+            s3_client.put_object(Bucket = NAME_S3_BUCKET, Key = f"{folder}/" )
+            print(f"Folder {folder} created.")
+
+    return
+
+def read_configuration_folder_files_and_upload():
+    '''This functions read files inside configuration folder and upload any
+    missing file'''
+
+    return
+
+
+def check_if_configuration_files_if_not_upload(
+    s3_client, dict_configuration_files, 
+    config_folder_s3
+        ):
+
+
+    return
+
 def call_methods():
 
-    bucket_region = 'us-east-1'
-    name_s3_bucket = 'gra-porfolio-bucket2'
+    dict_input_info, dict_configuration_files = input_paths_and_names
 
-    s3_client = boto3.client('s3', region_name = bucket_region)
-    BUCKET_ALREADY_EXISTS = list_buckets(s3_client)
+    s3_client = boto3.client(
+        's3', region_name = dict_input_info['bucket_region']
+        )
+    BUCKET_ALREADY_EXISTS = check_bucket_existence(s3_client)
 
     if not BUCKET_ALREADY_EXISTS:
         print('BUCKET_ALREADY_EXISTS',BUCKET_ALREADY_EXISTS)
-        create_bucket(s3_client,  name_s3_bucket)
+        create_bucket(s3_client,  dict_input_info['NAME_S3_BUCKET']
+        )
+
+    existent_folders= list_folders_in_bucket(
+        s3_client, dict_input_info['NAME_S3_BUCKET'] 
+        )
+
+    check_if_required_folders_exists_ifnot_create(
+        s3_client, dict_input_info['NAME_S3_BUCKET'], 
+        existent_folders, dict_input_info['folders_required']
+        )
+
+    check_if_configuration_files_if_not_upload(
+        s3_client, dict_configuration_files, 
+        dict_input_info['folders_required'][0]
+        )
 
     return
-#if __name__ == "__main__":
-#    call_methods()
+if __name__ == "__main__":
+    call_methods()
