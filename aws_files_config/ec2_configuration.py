@@ -115,24 +115,42 @@ def create_new_instance( ec2_resource, ec2_client, dict_create_instance):
     INSTANCE_TYPE = dict_create_instance['INSTANCE_TYPE']
     USER_DATA = dict_create_instance['USER_DATA']
     KEY_PAIR_NAME = dict_create_instance['KEY_PAIR_NAME'] 
+
+    security_group_name = 'standard_security_group'
+    try:
+        existent_security = ec2_client.describe_security_groups(
+            GroupNames=[security_group_name]
+            )
+
+        print(existent_security,'nome security')
+
+        if len(existent_security['SecurityGroups']) > 0:
+            security_group_id = existent_security['SecurityGroups'][0]['GroupId']
+            ec2_client.delete_security_group(GroupId=security_group_id)
+            #security_group = existent_security['SecurityGroups'][0]
+        
+    except:
+        print('doesnt exists this security group')
     security_group = ec2_resource.create_security_group(
-        GroupName='standard_security_group',
+        GroupName= security_group_name,
         Description='Standard security group for SSH access'
     )
     security_group.authorize_ingress(
-        IpPermissions=[
-            {
-                'FromPort': 22,
-                'ToPort': 22,
-                'IpProtocol': 'TCP',
-                'IpRanges': [
-                    {
-                        'CidrIp': '0.0.0.0/0'
-                    }
-                ]
-            }
-        ]
+    IpPermissions=[
+        {
+            'FromPort': 22,
+            'ToPort': 22,
+            'IpProtocol': 'TCP',
+            'IpRanges': [
+                {
+                    'CidrIp': '0.0.0.0/0'
+                }
+            ]
+        }
+    ]
     )
+
+    print('security_group',security_group)
     instances = ec2_resource.create_instances(
         MinCount = 1, # número mínimo de instâncias pra criar
         MaxCount = 1, # número máximo de instâncias pra criar
