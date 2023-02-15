@@ -1,6 +1,7 @@
 import boto3
 import os
-
+import paramiko
+import time
 
 def set_params_as_dict():
     '''Function of input parameter to determine instance name, id, type
@@ -38,8 +39,8 @@ def find_or_create_key_pair_locally(ec2_client, KEY_PAIR_NAME):
 
         # if exists returns 
         if exists_locally:
-            print('exists locally ') 
-            return
+            print('exists locally') 
+            return relative_path_key_pair
 
         #if not deletes it remotely since we cannot download it anymore and
         #call again the function
@@ -55,7 +56,7 @@ def find_or_create_key_pair_locally(ec2_client, KEY_PAIR_NAME):
         with open(relative_path_key_pair, 'w') as key_file:
             key_file.write(KEY_PAIR['KeyMaterial'])
 
-    return
+    return relative_path_key_pair
 
 
 def list_instances_and_start_selected(ec2_resource, INSTANCE_NAME):
@@ -76,31 +77,37 @@ def list_instances_and_start_selected(ec2_resource, INSTANCE_NAME):
             print('state',state)
             correct_instance = instance
 
-            #if state is pending wait until running
-            if state == 'pending':
-                instance[0].wait_until_running()
-                print(f'instance {INSTANCE_NAME} is running',)
+            #if is running continue
+            if state == 'running':
+                return there_is_instance, correct_instance
+
+            #if state is pending wait until running  
+            elif state == 'pending':
+                print('entrou state pendente')
+                instance.wait_until_running()
+                print(f'instance {INSTANCE_NAME} is running state {instance.state["Name"]}')
+                return there_is_instance, correct_instance
 
             #if state is stopped wait until running
             elif state == 'stopped':
                 instance.start()
                 instance.wait_until_running()
-                print(f'instence {INSTANCE_NAME} is running')
+                print(f'instance {INSTANCE_NAME} is running state')
             
             #if state is terminated there is no instance
             elif state == 'shutting-down':
                 instance.wait_until_terminated()
                 there_is_instance = False
-                print(f'instence {INSTANCE_NAME} is terminated')
+                print(f'instance {INSTANCE_NAME} is terminated')
 
             #if state is terminated there is no instance
             elif state == 'terminated':
                 there_is_instance = False
-                print(f'instence {INSTANCE_NAME} is terminated')
+                print(f'instance {INSTANCE_NAME} is terminated')
 
     return there_is_instance, correct_instance
 
-def create_new_instance( EC2_RESOURCE, dict_create_instance):
+def create_new_instance( ec2_resource, ec2_client, dict_create_instance):
     ''' Function to create new instance if there is none by the input name'''
     
     AMI_ID = dict_create_instance['AMI_ID']
@@ -108,14 +115,34 @@ def create_new_instance( EC2_RESOURCE, dict_create_instance):
     INSTANCE_TYPE = dict_create_instance['INSTANCE_TYPE']
     USER_DATA = dict_create_instance['USER_DATA']
     KEY_PAIR_NAME = dict_create_instance['KEY_PAIR_NAME'] 
-
-    instance = EC2_RESOURCE.create_instances(
+    security_group = ec2_resource.create_security_group(
+        GroupName='standard_security_group',
+        Description='Standard security group for SSH access'
+    )
+    security_group.authorize_ingress(
+        IpPermissions=[
+            {
+                'FromPort': 22,
+                'ToPort': 22,
+                'IpProtocol': 'TCP',
+                'IpRanges': [
+                    {
+                        'CidrIp': '0.0.0.0/0'
+                    }
+                ]
+            }
+        ]
+    )
+    instances = ec2_resource.create_instances(
         MinCount = 1, # número mínimo de instâncias pra criar
         MaxCount = 1, # número máximo de instâncias pra criar
         ImageId = AMI_ID,
         InstanceType = INSTANCE_TYPE,
         KeyName = KEY_PAIR_NAME,
         UserData = USER_DATA,
+        SecurityGroups = [
+            security_group.group_name
+        ],
         TagSpecifications = [
             {
                 'ResourceType' : 'instance',
@@ -128,19 +155,112 @@ def create_new_instance( EC2_RESOURCE, dict_create_instance):
             },
         ]
     )
-    
-    print('initializing instance', instance)
-    instance[0].wait_until_running()
-    print('instance initialized')
 
-    return instance[0]
+    instances[0].wait_until_running()
 
-def configure_new_instance():
-    '''Function to configure including downloading files from s3 and 
-    installing required libraires'''
+    # Get the instance status
+    instance_status = instances[0].state['Name']
+    print('instance_status',instance_status)
+    # Verify that the instance is running
+    while instance_status != 'running':
+        instance = ec2_resource.Instance(instances[0].id)
+        instance_status = instance.state['Name']
+        print(f"Instance status: {instance_status}")
+        time.sleep(10)
+
+    print(f"Instance is now running: {instances[0].id}")
+    return instances[0]
+
+def connect_to_instance(correct_instance, relative_path_key_pair):
+    print('conenct to paramiko')
+    print('correct_instance',correct_instance)
+    print('relative_path_key_pair',relative_path_key_pair)
+    print('correct_instance.platform ',correct_instance.platform )
+    print('dns',correct_instance.public_dns_name)
+    print('ipadress 1',correct_instance.public_ip_address)
+
+    ip_publico = correct_instance.public_ip_address
+    dns = correct_instance.public_dns_name
+    conection_username = "ubuntu"
+ 
+    client_paramiko = paramiko.SSHClient()
+    client_paramiko.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client_paramiko.connect(dns, username=conection_username, 
+    pkey=paramiko.RSAKey.from_private_key_file(relative_path_key_pair))
+
+    return client_paramiko
+
+def download_files_from_s3():
+    s3_client = boto3.client('s3')
+    s3_client.download_file('gra-portfolio-bucket')
+
 
     return
 
+def execute_config_files():
+
+    return  
+
+def verify_files_in_instance_to_configure(client_paramiko):
+    # Execute commands on the remote host
+    stdin, stdout_folder, stderr = client_paramiko.exec_command('ls {}'.
+        format('/home/ubuntu'))
+
+    stdin, stdout_files, stderr = client_paramiko.exec_command('ls {}'.
+        format('/home/ubuntu/pneumonia'))
+
+    folders_existent = []
+    output_folder = stdout_folder.readlines()
+    for line in output_folder:
+        print('line strip',line.strip())
+        folders_existent.append(line.strip())
+
+    files_existent = []
+    output_files = stdout_files.readlines()
+    for line in output_files:
+        print('line strip',line.strip())
+        files_existent.append(line.strip())
+
+    if 'pneumonia' not in folders_existent:
+        print('doesnt exists folder not configured')
+
+    else: 
+        print('folder exists')
+        import glob
+
+        #files_required = glob.glob('s3_upload_files/*')
+        files_required = []
+        print('files_required',files_required,'files_existent',files_existent[0])
+
+        if all(elem in files_existent for elem in files_required):
+            print('files doesnt exists')
+
+        else:
+            print('all files exists',files_existent)
+    return
+
+def configure_instance(correct_instance, relative_path_key_pair):
+    '''Function to configure including downloading files from s3 and 
+    installing required libraires'''
+
+    client_paramiko = connect_to_instance(
+        correct_instance, relative_path_key_pair
+        )
+    is_instance_configured = verify_files_in_instance_to_configure(
+        client_paramiko
+        )
+
+    if not is_instance_configured:
+        #download_files_from_s3()
+        #execute_config_files()
+        print('not configured')
+    
+    else:
+        print('instance already configured')
+    
+    client_paramiko.close()
+    return
+        
 def stop_instance(instance):
     '''Function to stop instances that are running'''
 
@@ -165,7 +285,7 @@ def ec2_config():
         'ec2', region_name = dict_create_instance['AWS_REGION']
         )
         
-    find_or_create_key_pair_locally(
+    relative_path_key_pair = find_or_create_key_pair_locally(
         ec2_client,dict_create_instance['KEY_PAIR_NAME']
         )
 
@@ -173,17 +293,27 @@ def ec2_config():
         ec2_resource,dict_create_instance['INSTANCE_NAME']
         )
     
+    #print('correct_instance',correct_instance)
+    #print('dns',correct_instance.public_dns_name)
+    #print('there_is_instance',there_is_instance)
+    
     if not there_is_instance:
+
         correct_instance = create_new_instance(
-            ec2_resource, dict_create_instance
+            ec2_resource, ec2_client, dict_create_instance
+            )#
+
+        there_is_instance, correct_instance = list_instances_and_start_selected(
+            ec2_resource,dict_create_instance['INSTANCE_NAME']
             )
-            
-        #configure_new_instance(
 
-        #)
+    configure_instance(correct_instance, relative_path_key_pair)
 
-    if correct_instance != None:
-        stop_instance(correct_instance)
+    print('dns',correct_instance.public_dns_name)
+
+    #if correct_instance != None:
+        #stop_instance(correct_instance)
+
     return
     
 if __name__ == "__main__":

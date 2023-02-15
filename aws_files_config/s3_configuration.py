@@ -1,23 +1,17 @@
 import boto3
+import os
 
 def input_paths_and_names():
     '''This function is the input data for all the info and paths'''
 
     dict_input_info = {
         'bucket_region' : 'us-east-1',
-        'NAME_S3_BUCKET' : 'gra-porfolio-bucket2',
+        'NAME_S3_BUCKET' : 'gra-portfolio-bucket',
         'folders_required' : ['config_folder', 'input_folder', 'output_folder'],
+        's3_files_folder' : 's3_upload_files'
   
     }
-
-    dict_configuration_files = {
-        'model_path' : 'model_path\model_pneumonia_resnet18.pt',
-        #'image_preprocess_file' : '',# TO DO
-        'load_modl_file' : 'load_model.py',
-        'requirements_file' : 'requirements.txt'
-
-    }
-    return dict_input_info, dict_configuration_files
+    return dict_input_info 
 
 
 def check_bucket_existence(s3_client, name_s3_client = ''):
@@ -80,16 +74,34 @@ def read_configuration_folder_files_and_upload():
 
 
 def check_if_configuration_files_if_not_upload(
-    s3_client, dict_configuration_files, 
-    config_folder_s3
+    s3_client, NAME_S3_BUCKET, 
+    s3_files_folder, config_folder_s3
         ):
 
+    files_for_upload = os.listdir(s3_files_folder + '/')
+    files_listed_in_bucket = s3_client.list_objects(
+        Bucket = NAME_S3_BUCKET, Prefix = config_folder_s3 +'/'
+        )
+
+    #print(files_listed_in_bucket[''])
+    files_in_s3_config = [
+        obj["Key"].split('/')[-1] for obj in files_listed_in_bucket.get("Contents",
+         []) if not obj["Key"].endswith("/")]
+
+    print('files',files_in_s3_config)
+    print('files_for_upload',files_for_upload)
+    
+    for file in files_for_upload:
+        if file not in files_in_s3_config:
+            with open(s3_files_folder + '/' + file, 'rb') as data:
+                s3_client.upload_fileobj(
+                    data, NAME_S3_BUCKET, config_folder_s3 + '/' + file)
 
     return
 
 def call_methods():
 
-    dict_input_info, dict_configuration_files = input_paths_and_names
+    dict_input_info = input_paths_and_names()
 
     s3_client = boto3.client(
         's3', region_name = dict_input_info['bucket_region']
@@ -111,10 +123,11 @@ def call_methods():
         )
 
     check_if_configuration_files_if_not_upload(
-        s3_client, dict_configuration_files, 
-        dict_input_info['folders_required'][0]
+        s3_client, dict_input_info['NAME_S3_BUCKET'], 
+        dict_input_info['s3_files_folder'], dict_input_info['folders_required'][0]
         )
 
+    
     return
 if __name__ == "__main__":
     call_methods()
