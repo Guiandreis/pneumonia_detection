@@ -32,18 +32,19 @@ def get_model(path):
     ''' LOAD MODEL '''
     
     print('load model')
-    model = load_model.resnet18model()
-    model.load_state_dict(torch.load(path))
+    model = load_model.classify()
+    model.load_state_dict(torch.load(path, map_location = torch.device(device)))
     print('model loaded')
     return model.eval()
-
-path = 'model_path\model_pneumonia_resnet18.pt'
+device = 'cpu'
+path = 'model_path\model_pneumonia.pt'
 model = get_model(path)
 
 app = Flask(__name__, template_folder='static')
 
 @app.route('/')
 def index():
+    print('index ')
     return send_file('static\image.html')
 
 @app.route('/image', methods=['POST'])
@@ -53,6 +54,7 @@ def receive_image():
     preprocessed_image = preprocess_image(file_storage)
     prediction = model(preprocessed_image)
     pred_probs = torch.softmax(prediction, dim=1).data.numpy()
+    print('pred_probs',pred_probs)
     response = {
                 'Pneumonia detector chances in (%)' : '',
                 'Normal Chance': float(pred_probs[0][0])*100, 

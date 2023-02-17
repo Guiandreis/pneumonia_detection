@@ -1,18 +1,6 @@
 import boto3
 import os
-
-def input_paths_and_names():
-    '''This function is the input data for all the info and paths'''
-
-    dict_input_info = {
-        'bucket_region' : 'us-east-1',
-        'NAME_S3_BUCKET' : 'gra-portfolio-bucket',
-        'folders_required' : ['config_folder', 'input_folder', 'output_folder'],
-        's3_files_folder' : 's3_upload_files'
-  
-    }
-    return dict_input_info 
-
+import aws_files_config.aws_settings as aws_settings
 
 def check_bucket_existence(s3_client, name_s3_client = ''):
     '''This function list all existing buckets and check for existent one'''
@@ -99,35 +87,38 @@ def check_if_configuration_files_if_not_upload(
 
     return
 
-def call_methods():
-
-    dict_input_info = input_paths_and_names()
+def call_methods(dict_input_info_s3): 
 
     s3_client = boto3.client(
-        's3', region_name = dict_input_info['bucket_region']
+        's3', region_name = dict_input_info_s3['bucket_region']
         )
     BUCKET_ALREADY_EXISTS = check_bucket_existence(s3_client)
 
     if not BUCKET_ALREADY_EXISTS:
         print('BUCKET_ALREADY_EXISTS',BUCKET_ALREADY_EXISTS)
-        create_bucket(s3_client,  dict_input_info['NAME_S3_BUCKET']
+        create_bucket(s3_client,  dict_input_info_s3['NAME_S3_BUCKET']
         )
 
     existent_folders= list_folders_in_bucket(
-        s3_client, dict_input_info['NAME_S3_BUCKET'] 
+        s3_client, dict_input_info_s3['NAME_S3_BUCKET'] 
         )
 
     check_if_required_folders_exists_ifnot_create(
-        s3_client, dict_input_info['NAME_S3_BUCKET'], 
-        existent_folders, dict_input_info['folders_required']
+        s3_client, dict_input_info_s3['NAME_S3_BUCKET'], 
+        existent_folders, dict_input_info_s3['folders_required']
         )
 
     check_if_configuration_files_if_not_upload(
-        s3_client, dict_input_info['NAME_S3_BUCKET'], 
-        dict_input_info['s3_files_folder'], dict_input_info['folders_required'][0]
+        s3_client, dict_input_info_s3['NAME_S3_BUCKET'], 
+        dict_input_info_s3['s3_files_folder'], 
+        dict_input_info_s3['folders_required'][0]
         )
 
     
     return
 if __name__ == "__main__":
-    call_methods()
+
+    dict_input_info_s3, dict_input_info_ec2 = aws_settings.configurations()
+
+
+    call_methods(dict_input_info_s3)

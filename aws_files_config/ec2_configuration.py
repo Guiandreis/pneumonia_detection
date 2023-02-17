@@ -2,22 +2,7 @@ import boto3
 import os
 import paramiko
 import time
-
-def set_params_as_dict():
-    '''Function of input parameter to determine instance name, id, type
-    key pair, region etc...'''
-    
-    dict_create_instance= {
-        'INSTANCE_NAME' : 'pneumonia_detection',
-        'AMI_ID' : 'ami-0557a15b87f6559cf', ##free tier UBUNTU 20.04
-        'INSTANCE_TYPE' : 't2.micro', ##free tier,
-        'USER_DATA' : "#!bin/bash mk",
-        'KEY_PAIR_NAME' : 'pneumonia_key_pair',#pneumonia_key_pair nometeste
-        'AWS_REGION' : 'us-east-1',
-
-    }
-
-    return dict_create_instance
+import aws_files_config.aws_settings as aws_settings
 
 def find_or_create_key_pair_locally(ec2_client, KEY_PAIR_NAME):
     '''Function to find or create new key_pair if it doesnt exists locally'''
@@ -57,7 +42,6 @@ def find_or_create_key_pair_locally(ec2_client, KEY_PAIR_NAME):
             key_file.write(KEY_PAIR['KeyMaterial'])
 
     return relative_path_key_pair
-
 
 def list_instances_and_start_selected(ec2_resource, INSTANCE_NAME):
     '''Function to list instances and start selected one by name'''
@@ -122,15 +106,13 @@ def create_new_instance( ec2_resource, ec2_client, dict_create_instance):
             GroupNames=[security_group_name]
             )
 
-        print(existent_security,'nome security')
-
         if len(existent_security['SecurityGroups']) > 0:
             security_group_id = existent_security['SecurityGroups'][0]['GroupId']
             ec2_client.delete_security_group(GroupId=security_group_id)
-            #security_group = existent_security['SecurityGroups'][0]
         
     except:
         print('doesnt exists this security group')
+
     security_group = ec2_resource.create_security_group(
         GroupName= security_group_name,
         Description='Standard security group for SSH access'
@@ -150,7 +132,6 @@ def create_new_instance( ec2_resource, ec2_client, dict_create_instance):
     ]
     )
 
-    print('security_group',security_group)
     instances = ec2_resource.create_instances(
         MinCount = 1, # número mínimo de instâncias pra criar
         MaxCount = 1, # número máximo de instâncias pra criar
@@ -208,35 +189,29 @@ def connect_to_instance(correct_instance, relative_path_key_pair):
 
     return client_paramiko
 
-def download_files_from_s3():
-    s3_client = boto3.client('s3')
-    s3_client.download_file('gra-portfolio-bucket')
-
-
-    return
-
-def execute_config_files():
-
-    return  
 
 def verify_files_in_instance_to_configure(client_paramiko):
     # Execute commands on the remote host
+
     stdin, stdout_folder, stderr = client_paramiko.exec_command('ls {}'.
         format('/home/ubuntu'))
 
     stdin, stdout_files, stderr = client_paramiko.exec_command('ls {}'.
         format('/home/ubuntu/pneumonia'))
 
+    instance_configured = False
     folders_existent = []
     output_folder = stdout_folder.readlines()
+
     for line in output_folder:
-        print('line strip',line.strip())
+        print('line strip folder',line.strip())
         folders_existent.append(line.strip())
 
     files_existent = []
     output_files = stdout_files.readlines()
+
     for line in output_files:
-        print('line strip',line.strip())
+        print('line strip files',line.strip())
         files_existent.append(line.strip())
 
     if 'pneumonia' not in folders_existent:
@@ -246,18 +221,58 @@ def verify_files_in_instance_to_configure(client_paramiko):
         print('folder exists')
         import glob
 
-        #files_required = glob.glob('s3_upload_files/*')
-        files_required = []
-        print('files_required',files_required,'files_existent',files_existent[0])
+        files_required = glob.glob('s3_upload_files/*')
+        #files_required = []
+        print('files_required',files_required,'files_existent',files_existent)
 
         if all(elem in files_existent for elem in files_required):
             print('files doesnt exists')
 
         else:
             print('all files exists',files_existent)
+            instance_configured = True
+
+    return instance_configured
+
+
+def download_files_from_s3(dict_input_info_s3, client_paramiko):
+    bucket_name = dict_input_info_s3['NAME_S3_BUCKET']#'gra-portfolio-bucket'
+    bucket_folder  = dict_input_info_s3['folders_required'][0]#'config_folder/'
+    client_paramiko.exec_command('mkdir pneumonia')
+    client_paramiko.exec_command('mkdir pneumonia/input')
+    client_paramiko.exec_command('mkdir pneumonia/output')
+    sftp = client_paramiko.open_sftp()
+
+    #sftp.mkdir('pneumonia')
+    s3_resource = boto3.resource('s3')
+    bucket = s3_resource.Bucket(bucket_name)
+    for obj in bucket.objects.filter(Prefix=bucket_folder + '/'):
+        if not obj.key.endswith('/'):
+            print('obj',obj)
+            file_name = os.path.basename(obj.key)
+            bucket.download_file(obj.key, file_name)
+            sftp.put(file_name, f'/home/ubuntu/pneumonia/{file_name}')
+            os.remove(file_name)
+    #s3_client = boto3.client('s3')
+    #s3_client.download_file('gra-portfolio-bucket')
+
     return
 
-def configure_instance(correct_instance, relative_path_key_pair):
+def execute_config_files(client_paramiko):
+    stdin, stdout, stderr = client_paramiko.exec_command('sudo apt-get update && sudo apt-get install python3-pip -y')
+    output = stdout.read().decode()
+    print('output install pip',output)
+
+    stdin, stdout, stderr = client_paramiko.exec_command('cd /home/ubuntu/pneumonia && sudo pip install -r aws_requirements.txt --no-cache-dir')
+    output = stdout.read().decode()
+    print('output install requirements',output)
+    
+
+    return  
+
+def configure_instance(
+    dict_input_info_s3, correct_instance, relative_path_key_pair
+    ):
     '''Function to configure including downloading files from s3 and 
     installing required libraires'''
 
@@ -269,15 +284,15 @@ def configure_instance(correct_instance, relative_path_key_pair):
         )
 
     if not is_instance_configured:
-        #download_files_from_s3()
-        #execute_config_files()
+        download_files_from_s3(dict_input_info_s3, client_paramiko )
+        execute_config_files(client_paramiko)
         print('not configured')
     
     else:
         print('instance already configured')
-    
-    client_paramiko.close()
-    return
+        
+    #client_paramiko.close()
+    return client_paramiko
         
 def stop_instance(instance):
     '''Function to stop instances that are running'''
@@ -291,24 +306,22 @@ def stop_instance(instance):
     return
 
 
-def ec2_config():
-
-    dict_create_instance = set_params_as_dict()
+def ec2_config(dict_input_info_s3, dict_input_info_ec2):
 
     ec2_client = boto3.client(
-        'ec2', region_name = dict_create_instance['AWS_REGION']
+        'ec2', region_name = dict_input_info_ec2['AWS_REGION']
         )
 
     ec2_resource = boto3.resource(
-        'ec2', region_name = dict_create_instance['AWS_REGION']
+        'ec2', region_name = dict_input_info_ec2['AWS_REGION']
         )
         
     relative_path_key_pair = find_or_create_key_pair_locally(
-        ec2_client,dict_create_instance['KEY_PAIR_NAME']
+        ec2_client,dict_input_info_ec2['KEY_PAIR_NAME']
         )
 
     there_is_instance, correct_instance = list_instances_and_start_selected(
-        ec2_resource,dict_create_instance['INSTANCE_NAME']
+        ec2_resource,dict_input_info_ec2['INSTANCE_NAME']
         )
     
     #print('correct_instance',correct_instance)
@@ -318,22 +331,26 @@ def ec2_config():
     if not there_is_instance:
 
         correct_instance = create_new_instance(
-            ec2_resource, ec2_client, dict_create_instance
+            ec2_resource, ec2_client, dict_input_info_ec2
             )#
 
         there_is_instance, correct_instance = list_instances_and_start_selected(
-            ec2_resource,dict_create_instance['INSTANCE_NAME']
+            ec2_resource,dict_input_info_ec2['INSTANCE_NAME']
             )
 
-    configure_instance(correct_instance, relative_path_key_pair)
+    client_paramiko = configure_instance(
+        dict_input_info_s3, correct_instance, relative_path_key_pair
+        )
 
     print('dns',correct_instance.public_dns_name)
 
-    #if correct_instance != None:
-        #stop_instance(correct_instance)
+    if correct_instance != None:
+        stop_instance(correct_instance)
 
-    return
+    return client_paramiko
     
 if __name__ == "__main__":
-    ec2_config()
+
+    dict_input_info_s3, dict_input_info_ec2 = aws_settings.configurations()
+    ec2_config(dict_input_info_s3, dict_input_info_ec2)
     

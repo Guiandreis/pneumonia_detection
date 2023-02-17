@@ -1,20 +1,21 @@
-# Chest X-ray Pneumonia Classifier
+
+# Project 1: Chest X-ray Pneumonia Classifier
 
 Developed a deep learning neural network (DLNN) that classifies Chest X-Rays images within normal and pneumonia categories to help medical diagnosis in time and assertiveness.
 Developed a FLASK API to serve as the interface with users.
 
-![flask api](/images_read_me/flask_api2.PNG) ![results_api](/images_read_me/result_api2.PNG)
-
-
+<p align="center">
+  <img src="images_read_me/flask_api2.PNG" width="400" height="250">
+  <img src="images_read_me/result_api2.PNG" width="400" height="250">
+</p>
+ 
 In order to reach the best result, the DLNN used a ResNet18 backbone and was trained using the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia). The figures below show the results of the confusion matrix and a batch of the test dataset used to train the network.
 
-![confusion matrix ](/images_read_me/confusion_matrix3.png)
-![batch_result](/images_read_me/batch_result_final.png)
+<p align="center">
+  <img src="images_read_me/confusion_matrix3.png" width="400" height="400">
+  <img src="images_read_me/batch_result_final.png" width="400" height="400">
+</p>
 
-In order to make the DLNN more explainable to physicians, the Gradcam was developed to try to demonstrate what parts of the images the DLNN is "looking" and attributing greater weights in the classification results, the input image and the highlighted points by the model with Gradcam is shown bellow.
-
-![Original image](/images_read_me/cheast_image1.png)
-![Gradcam over image](/images_read_me/gradcam_heatmap1.png)
-
+For more information about the project click on the title of this project.
 
 

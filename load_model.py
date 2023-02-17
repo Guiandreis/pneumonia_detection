@@ -3,38 +3,39 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 import torchvision.models as models
 
-class resnet18model(nn.Module):
 
-
-  def __init__(self):
-
-    super(resnet18model, self).__init__()
-    self.feature_extractor = models.resnet18(weights = None)
-    self.feature_extractor = torch.nn.Sequential(
-        *(list(self.feature_extractor.children())[:-2]))
-
-    self.classifier = nn.Sequential(
-        nn.AdaptiveAvgPool2d(output_size=(1, 1)),
-        nn.Flatten(),
-        nn.Linear(512, 128),
-        nn.ReLU(inplace=True),
-        nn.Linear(128, 2)
-        )
-    
-    self.gradient = None
-
-  def activations_hook(self, grad):
-    self.gradient = grad
-
-  def forward(self, images):
-
-    x = self.feature_extractor(images) ### feature maps / ACTIVATION MAPS
-    h = x.register_hook(self.activations_hook)
-    x = self.classifier(x)  ## top layers
-    return x
-
-  def get_activation_gradients(self): ##a1, a2, a3...ak
-    return self.gradient
-
-  def get_activation(self,x):   ### A1,A2,A3 .. ak
-    return self.feature_extractor(x)
+class classify(nn.Module):
+    def __init__(self,num_classes=2):
+        super(classify,self).__init__()
+        
+         
+        self.conv1=nn.Conv2d(in_channels=3, out_channels=12, kernel_size=3, stride=1, padding=1)
+        self.bn1=nn.BatchNorm2d(num_features=12)
+        self.relu1=nn.ReLU()        
+        self.pool=nn.MaxPool2d(kernel_size=2)
+        self.conv2=nn.Conv2d(in_channels=12,out_channels=20,kernel_size=3,stride=1,padding=1)
+        self.bn2=nn.BatchNorm2d(num_features=20)
+        self.relu2=nn.ReLU()
+        self.conv3=nn.Conv2d(in_channels=20,out_channels=32,kernel_size=3,stride=1,padding=1)
+        self.bn3=nn.BatchNorm2d(num_features=32)
+        self.relu3=nn.ReLU()
+        self.fc=nn.Linear(in_features=32 * 112 * 112,out_features=num_classes)
+      
+        
+        #Feed forwad function
+        
+    def forward(self,input):
+        output=self.conv1(input)
+        output=self.bn1(output)
+        output=self.relu1(output)
+        output=self.pool(output)
+        output=self.conv2(output)
+        output=self.bn2(output)
+        output=self.relu2(output)
+        output=self.conv3(output)
+        output=self.bn3(output)
+        output=self.relu3(output)            
+        output=output.reshape(-1,32*112*112)
+        output=self.fc(output)
+            
+        return output
