@@ -1,9 +1,21 @@
+import albumentations as A
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import torchvision.models as models
 
+from PIL import Image
+import numpy as np
+import cv2
 
+
+def settings():
+    
+    device = 'cpu'
+    path = 'model_path\model_pneumonia.pt'
+
+    return device, path
+    
 class classify(nn.Module):
     def __init__(self,num_classes=2):
         super(classify,self).__init__()
@@ -39,3 +51,42 @@ class classify(nn.Module):
         output=self.fc(output)
             
         return output
+
+IMG_SIZE = 224
+val_transform = A.Compose(
+    [        
+        A.Resize(IMG_SIZE,IMG_SIZE),
+        A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+    ]
+)
+
+
+def preprocess_image(file_storage):
+    ''' Preprocess and transform image to NN'''
+
+    image = np.array(Image.open(file_storage),dtype=np.uint8)
+    image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB) 
+    image = val_transform(image = image)['image']
+    image = torch.from_numpy(image).unsqueeze(0)
+    image_preprocessed = np.transpose(image,(0,3,1,2))
+    return image_preprocessed
+
+def get_model(device,path):
+    ''' LOAD MODEL '''
+    
+    print('load model')
+    model = classify()
+    model.load_state_dict(torch.load(path, map_location = torch.device(device)))
+    print('model loaded')
+    return model.eval()
+
+
+def process_exam(file_storage):
+
+    device, path = settings()
+    model = get_model(device,path)
+    image_preprocessed = preprocess_image(file_storage)
+    prediction = model(image_preprocessed)
+    pred_probs = torch.softmax(prediction, dim=1).data.numpy()
+
+    return pred_probs

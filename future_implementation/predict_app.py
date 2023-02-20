@@ -6,7 +6,7 @@ from PIL import Image
 import base64
 import albumentations as A
 
-import load_model
+import preprocess_and_predict_local
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -43,7 +43,7 @@ def get_model(path):
     ''' LOAD MODEL '''
 
     print('load model')
-    model = load_model.resnet18model()
+    model = preprocess_and_predict_local.resnet18model()
     model.load_state_dict(torch.load(path))
     print('model loaded')
     return model.eval()

@@ -256,7 +256,7 @@ def download_files_from_s3(dict_input_info_s3, client_paramiko):
     #s3_client = boto3.client('s3')
     #s3_client.download_file('gra-portfolio-bucket')
 
-    return
+    return sftp, s3_resource
 
 def execute_config_files(client_paramiko):
     stdin, stdout, stderr = client_paramiko.exec_command('sudo apt-get update && sudo apt-get install python3-pip -y')
@@ -284,15 +284,16 @@ def configure_instance(
         )
 
     if not is_instance_configured:
-        download_files_from_s3(dict_input_info_s3, client_paramiko )
+        sftp = download_files_from_s3(dict_input_info_s3, client_paramiko )
         execute_config_files(client_paramiko)
         print('not configured')
     
     else:
+        sftp = client_paramiko.open_sftp()
         print('instance already configured')
         
     #client_paramiko.close()
-    return client_paramiko
+    return client_paramiko, sftp
         
 def stop_instance(instance):
     '''Function to stop instances that are running'''
@@ -304,7 +305,6 @@ def stop_instance(instance):
     print('instance stopped')
 
     return
-
 
 def ec2_config(dict_input_info_s3, dict_input_info_ec2):
 
@@ -323,11 +323,7 @@ def ec2_config(dict_input_info_s3, dict_input_info_ec2):
     there_is_instance, correct_instance = list_instances_and_start_selected(
         ec2_resource,dict_input_info_ec2['INSTANCE_NAME']
         )
-    
-    #print('correct_instance',correct_instance)
-    #print('dns',correct_instance.public_dns_name)
-    #print('there_is_instance',there_is_instance)
-    
+        
     if not there_is_instance:
 
         correct_instance = create_new_instance(
@@ -338,19 +334,20 @@ def ec2_config(dict_input_info_s3, dict_input_info_ec2):
             ec2_resource,dict_input_info_ec2['INSTANCE_NAME']
             )
 
-    client_paramiko = configure_instance(
+    client_paramiko, sftp = configure_instance(
         dict_input_info_s3, correct_instance, relative_path_key_pair
         )
 
     print('dns',correct_instance.public_dns_name)
 
-    if correct_instance != None:
-        stop_instance(correct_instance)
+    #if correct_instance != None:
+    #    stop_instance(correct_instance)
 
-    return client_paramiko
+    return client_paramiko, sftp
     
+'''
 if __name__ == "__main__":
 
     dict_input_info_s3, dict_input_info_ec2 = aws_settings.configurations()
-    ec2_config(dict_input_info_s3, dict_input_info_ec2)
-    
+    client_paramiko = ec2_config(dict_input_info_s3, dict_input_info_ec2)
+'''    

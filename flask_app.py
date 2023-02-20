@@ -1,44 +1,7 @@
-import torch
-import albumentations as A
-import load_model
-from PIL import Image
-from io import BytesIO
-import numpy as np
-import cv2
-
+import preprocess_and_predict_local
 from flask import Flask, request, send_file, render_template
-
-def read_image( image_bytes):
-    return np.array(Image.open(BytesIO(image_bytes))) 
-
-IMG_SIZE = 224
-val_transform = A.Compose(
-    [        
-        A.Resize(IMG_SIZE,IMG_SIZE),
-        A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
-    ]
-)
-def preprocess_image(file_storage):
-    ''' Preprocess and transform image to NN'''
-
-    image = np.array(Image.open(file_storage),dtype=np.uint8)
-    image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB) 
-    image = val_transform(image = image)['image']
-    image = torch.from_numpy(image).unsqueeze(0)
-    image_preprocessed = np.transpose(image,(0,3,1,2))
-    return image_preprocessed
-
-def get_model(path):
-    ''' LOAD MODEL '''
-    
-    print('load model')
-    model = load_model.classify()
-    model.load_state_dict(torch.load(path, map_location = torch.device(device)))
-    print('model loaded')
-    return model.eval()
-device = 'cpu'
-path = 'model_path\model_pneumonia.pt'
-model = get_model(path)
+import json
+import aws_predict
 
 app = Flask(__name__, template_folder='static')
 
@@ -51,19 +14,45 @@ def index():
 def receive_image():
     #message = request.get_json(force = True)
     file_storage = request.files.get('image')
-    preprocessed_image = preprocess_image(file_storage)
-    prediction = model(preprocessed_image)
-    pred_probs = torch.softmax(prediction, dim=1).data.numpy()
-    print('pred_probs',pred_probs)
-    response = {
+    print('file_storage',file_storage,'split ', )
+    name = file_storage.filename
+
+    file_storage_aws = file_storage.read()
+
+    if '.' in name[-4:]:
+        new_name = name.split('.')[:-1]
+        json_name = ''.join(new_name)
+
+    process = 'AWS'
+    
+    if process == 'Local':
+        pred_probs = preprocess_and_predict_local.process_exam(file_storage)
+        output = {
                 'Pneumonia detector chances in (%)' : '',
                 'Normal Chance': float(pred_probs[0][0])*100, 
                 'Pneumonia Chance' : float(pred_probs[0][1])*100 
                 }
 
+        json_object = json.dumps(output)
+
+        with open('outputs/' +json_name + ".json", "w") as outfile:
+            outfile.write(json_object)
+        print('pred_probs',pred_probs)
+    
+    else:
+        print('a')
+        aws_predict.aws_call_predictions(file_storage_aws, name)
+
+    #### JUST FOR AWS TEST
+    output = {
+            'Pneumonia detector chances in (%)' : '',
+            'Normal Chance': 100, 
+            'Pneumonia Chance' : 0
+            }
+
 
     return render_template(
-        'predictions.html', data = response)
+        'predictions.html', data = output)
 
 if __name__ == '__main__':
     app.run(debug = True)

@@ -87,7 +87,7 @@ def check_if_configuration_files_if_not_upload(
 
     return
 
-def call_methods(dict_input_info_s3): 
+def s3_config(dict_input_info_s3): 
 
     s3_client = boto3.client(
         's3', region_name = dict_input_info_s3['bucket_region']
@@ -115,10 +115,12 @@ def call_methods(dict_input_info_s3):
         )
 
     
-    return
+    return s3_client
+'''
 if __name__ == "__main__":
 
     dict_input_info_s3, dict_input_info_ec2 = aws_settings.configurations()
 
 
-    call_methods(dict_input_info_s3)
+    s3_config(dict_input_info_s3)
+'''
