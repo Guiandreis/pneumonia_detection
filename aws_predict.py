@@ -65,4 +65,5 @@ def aws_call_predictions(file_storage, name):
 
     client_paramiko.close()
     ec2_configuration.stop_instance(correct_instance)
+    
     return output
