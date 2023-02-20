@@ -23,7 +23,7 @@ def receive_image():
         new_name = name.split('.')[:-1]
         json_name = ''.join(new_name)
 
-    process = 'AWS'
+    process = 'Local'
     
     if process == 'Local':
         pred_probs = preprocess_and_predict_local.process_exam(file_storage)

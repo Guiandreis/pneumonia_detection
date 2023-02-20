@@ -256,7 +256,7 @@ def download_files_from_s3(dict_input_info_s3, client_paramiko):
     #s3_client = boto3.client('s3')
     #s3_client.download_file('gra-portfolio-bucket')
 
-    return sftp, s3_resource
+    return sftp
 
 def execute_config_files(client_paramiko):
     stdin, stdout, stderr = client_paramiko.exec_command('sudo apt-get update && sudo apt-get install python3-pip -y')

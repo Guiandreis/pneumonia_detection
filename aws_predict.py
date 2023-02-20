@@ -29,7 +29,9 @@ def exam_process(s3_client, client_paramiko, sftp, bucket_name, bucket_folder , 
     file_obj.seek(0)
 
     sftp.putfo(file_obj,ec2_path)
-    
+
+    client_paramiko.exec_command('python3 /home/ubuntu/pneumonia/preprocess_and_predict_aws.py')
+
     return
 
 def aws_call_predictions(file_storage, name):

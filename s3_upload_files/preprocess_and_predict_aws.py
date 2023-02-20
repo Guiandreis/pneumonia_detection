@@ -1,8 +1,8 @@
-import albumentations as A
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import torchvision.models as models
+import torchvision.transforms as transforms
 
 from PIL import Image
 import numpy as np
@@ -60,22 +60,22 @@ class classify(nn.Module):
         return output
 
 IMG_SIZE = 224
-val_transform = A.Compose(
-    [        
-        A.Resize(IMG_SIZE,IMG_SIZE),
-        A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+val_transform = transforms.Compose(
+    [       
+        transforms.ToTensor(),
+        transforms.Resize((IMG_SIZE, IMG_SIZE)),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ]
 )
-
 
 def preprocess_image(file_storage):
     ''' Preprocess and transform image to NN'''
 
     image = np.array(Image.open(file_storage),dtype=np.uint8)
     image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB) 
-    image = val_transform(image = image)['image']
-    image = torch.from_numpy(image).unsqueeze(0)
-    image_preprocessed = np.transpose(image,(0,3,1,2))
+    image = Image.fromarray(image)
+    image = val_transform(image)
+    image_preprocessed = image.unsqueeze(0)
     return image_preprocessed
 
 def get_model(device,path):
@@ -110,7 +110,7 @@ def process_exam():
 
         json_object = json.dumps(output )
 
-        with open('/home/ubuntu/pneumonia/outputs/' + name + ".json",
+        with open('/home/ubuntu/pneumonia/output/' + name + ".json",
          "w") as outfile:
             outfile.write(json_object)
         print('pred_probs',pred_probs)     
