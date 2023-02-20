@@ -13,7 +13,7 @@ import json
 def settings():
     
     device = 'cpu'
-    path = 'model_pneumonia.pt'
+    path = '/home/ubuntu/pneumonia/model_pneumonia.pt'
 
     return device, path
     
@@ -91,7 +91,7 @@ def get_model(device,path):
 def process_exam():
     images_to_process = glob.glob('/home/ubuntu/pneumonia/input/*')
     for file_storage in images_to_process:
-        name = file_storage.filename
+        name = file_storage.split('/')[-1]
 
         if '.' in name[-4:]:
             new_name = name.split('.')[:-1]
@@ -102,7 +102,7 @@ def process_exam():
         image_preprocessed = preprocess_image(file_storage)
         prediction = model(image_preprocessed)
         pred_probs = torch.softmax(prediction, dim=1).data.numpy()
-        output = {
+        output = {  
                 'Pneumonia detector chances in (%)' : '',
                 'Normal Chance': float(pred_probs[0][0])*100, 
                 'Pneumonia Chance' : float(pred_probs[0][1])*100 
@@ -116,3 +116,6 @@ def process_exam():
         print('pred_probs',pred_probs)     
 
     return pred_probs
+
+if __name__ == '__main__':
+    pred_probs = process_exam()

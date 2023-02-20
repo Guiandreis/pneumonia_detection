@@ -23,9 +23,9 @@ def receive_image():
         new_name = name.split('.')[:-1]
         json_name = ''.join(new_name)
 
-    process = 'Local'
+    process = 'AWS' # local
     
-    if process == 'Local':
+    if process == 'local':
         pred_probs = preprocess_and_predict_local.process_exam(file_storage)
         output = {
                 'Pneumonia detector chances in (%)' : '',
@@ -41,14 +41,17 @@ def receive_image():
     
     else:
         print('a')
-        aws_predict.aws_call_predictions(file_storage_aws, name)
+        output = aws_predict.aws_call_predictions(file_storage_aws, name)
+        #print('output',output,type(output))
+        output = json.loads(output)
+
 
     #### JUST FOR AWS TEST
-    output = {
-            'Pneumonia detector chances in (%)' : '',
-            'Normal Chance': 100, 
-            'Pneumonia Chance' : 0
-            }
+    #output = {
+    #        'Pneumonia detector chances in (%)' : '',
+    #        'Normal Chance': 100, 
+    #        'Pneumonia Chance' : 0
+    #        }
 
 
     return render_template(

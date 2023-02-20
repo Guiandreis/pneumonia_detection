@@ -221,16 +221,17 @@ def verify_files_in_instance_to_configure(client_paramiko):
         print('folder exists')
         import glob
 
-        files_required = glob.glob('s3_upload_files/*')
+        files_required = os.listdir('s3_upload_files/')
         #files_required = []
         print('files_required',files_required,'files_existent',files_existent)
 
         if all(elem in files_existent for elem in files_required):
-            print('files doesnt exists')
-
-        else:
             print('all files exists',files_existent)
             instance_configured = True
+            
+        else:
+            print('files doesnt exists')
+            
 
     return instance_configured
 
@@ -292,7 +293,7 @@ def configure_instance(
         sftp = client_paramiko.open_sftp()
         print('instance already configured')
         
-    #client_paramiko.close()
+    
     return client_paramiko, sftp
         
 def stop_instance(instance):
@@ -340,10 +341,8 @@ def ec2_config(dict_input_info_s3, dict_input_info_ec2):
 
     print('dns',correct_instance.public_dns_name)
 
-    #if correct_instance != None:
-    #    stop_instance(correct_instance)
 
-    return client_paramiko, sftp
+    return client_paramiko, sftp, correct_instance
     
 '''
 if __name__ == "__main__":
