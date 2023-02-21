@@ -1,6 +1,6 @@
 
 # Project 1: Chest X-ray Pneumonia Classifier
-*Tools: Python, Flask, Pytorch, AWS EC2, AWS S3, Paramiko*
+**Tools: Python, Flask, Pytorch, AWS EC2, AWS S3, Paramiko**
 
 Developed a deep learning neural network (DLNN) that classifies Chest X-Rays images within normal and pneumonia categories to help medical diagnosis in time and assertiveness.
 Developed a FLASK API to serve as the interface with users.
