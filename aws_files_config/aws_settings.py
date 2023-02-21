@@ -27,6 +27,8 @@ def input_paths_and_names():
     return dict_input_info 
 
 def configurations():
+    '''This is the main function of as settings'''
+    
     dict_input_info_s3 = input_paths_and_names()
 
     dict_input_info_ec2 = set_params_as_dict()  

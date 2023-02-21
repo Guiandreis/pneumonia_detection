@@ -9,6 +9,7 @@ import numpy as np
 import cv2
 import glob
 import json
+import os
 
 def settings():
     
@@ -18,7 +19,11 @@ def settings():
     return device, path
     
 class classify(nn.Module):
+    ''' This is the model class'''
+
+
     def __init__(self,num_classes=2):
+
         super(classify,self).__init__()
         
          
@@ -44,6 +49,7 @@ class classify(nn.Module):
         #Feed forwad function
         
     def forward(self,input):
+
         output=self.conv1(input)
         output=self.bn1(output)
         output=self.relu1(output)
@@ -89,11 +95,13 @@ def get_model(device,path):
 
 
 def process_exam():
+    '''This function is the main function'''
+
     images_to_process = glob.glob('/home/ubuntu/pneumonia/input/*')
     for file_storage in images_to_process:
         name = file_storage.split('/')[-1]
 
-        if '.' in name[-4:]:
+        if '.' in name[-5:]:
             new_name = name.split('.')[:-1]
             name = ''.join(new_name)
 
@@ -113,8 +121,7 @@ def process_exam():
         with open('/home/ubuntu/pneumonia/output/' + name + ".json",
          "w") as outfile:
             outfile.write(json_object)
-        print('pred_probs',pred_probs)     
-
+        os.remove(file_storage)
     return pred_probs
 
 if __name__ == '__main__':

@@ -11,16 +11,19 @@ import cv2
 
 
 def settings():
-    
+    '''Settings to find CPU and load model'''
     device = 'cpu'
     path = 'model_path\model_pneumonia.pt'
 
     return device, path
     
 class classify(nn.Module):
+    '''Model class'''
+
+
     def __init__(self,num_classes=2):
+
         super(classify,self).__init__()
-        
          
         self.conv1=nn.Conv2d(in_channels=3, out_channels=12, kernel_size=3, stride=1, padding=1)
         self.bn1=nn.BatchNorm2d(num_features=12)
@@ -34,10 +37,9 @@ class classify(nn.Module):
         self.relu3=nn.ReLU()
         self.fc=nn.Linear(in_features=32 * 112 * 112,out_features=num_classes)
       
-        
-        #Feed forwad function
-        
+                
     def forward(self,input):
+
         output=self.conv1(input)
         output=self.bn1(output)
         output=self.relu1(output)
@@ -83,7 +85,8 @@ def get_model(device,path):
 
 
 def process_exam(file_storage):
-
+    '''This function is the main function of this file'''
+    
     device, path = settings()
     model = get_model(device,path)
     image_preprocessed = preprocess_image(file_storage)
