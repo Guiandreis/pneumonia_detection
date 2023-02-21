@@ -12,8 +12,8 @@ Developed a FLASK API to serve as the interface with users.
 In order to reach the best result, the DLNN used a ResNet18 backbone and was trained using the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia). The figures below show the results of the confusion matrix and a batch of the test dataset used to train the network.
 
 <p align="center">
-  <img src="images_read_me/confusion_matrix3.png" width="400" height="400">
-  <img src="images_read_me/batch_result_final.png" width="400" height="400">
+  <img src="images_read_me/confusion_matrix4.png" width="400" height="400">
+  <img src="images_read_me/batch_result2.png" width="400" height="400">
 </p>
 
 For more information about the project click on the title of this project.
