@@ -22,20 +22,23 @@ In order to reach the best result, the DLNN trained using the [kaggle Chest X-Ra
 # Table of contents
 1.[How to Use](#How to Use)
 
-2.[Data Exploratory Analisys](#Data Exploratory Analisys)
+2.[Data Exploratory Analisys](#Exploratory Data Analisys)
 
 3.[Neural Network Development](#Neural Network Development)
 
 4.[AWS Configuration](#AWS Configuration)
 
 ## How to Use
+This session describe how to use this code
 
-## Data Exploratory Analisys
+## Exploratory Data Analisys
+This session describe the Exploratory Data Analisys performed
 
 ## Neural Network Development
+This session describes the Neural Network Development
 
 ## AWS Configuration
-
+This session describes the required AWS configuration as well as function for each component.
 
 
 
