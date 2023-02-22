@@ -20,46 +20,24 @@ In order to reach the best result, the DLNN trained using the [kaggle Chest X-Ra
 </p>
 
 # Table of contents
-1.[Example](#example)
-2.[Example2](#example2)
+1.[How to Use](#How to Use)
+
+2.[Data Exploratory Analisys](#Data Exploratory Analisys)
+
+3.[Neural Network Development](#Neural Network Development)
+
+4.[AWS Configuration](#AWS Configuration)
+
+## How to Use
+
+## Data Exploratory Analisys
+
+## Neural Network Development
+
+## AWS Configuration
 
 
-## Example
-test1
-kk
-kkk
-k
-k
-kk
-k
-k
-k
-k
-k
-k
-k
-k
-k
-k
-k
-k
 
-k
-k
-k
-kk
-k
-k
-k
-k
-kk
-k
-k
-k
-
-
-## Example2
-test
 
 
 
