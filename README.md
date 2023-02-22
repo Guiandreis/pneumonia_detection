@@ -20,13 +20,13 @@ In order to reach the best result, the DLNN trained using the [kaggle Chest X-Ra
 </p>
 
 # Table of contents
-1.[How to Use](#How to Use)
+1.[How to Use](#How-to-Use)
 
-2.[Data Exploratory Analisys](#Exploratory Data Analisys)
+2.[Data Exploratory Analisys](#Exploratory-Data-Analisys)
 
-3.[Neural Network Development](#Neural Network Development)
+3.[Neural Network Development](#Neural-Network-Development)
 
-4.[AWS Configuration](#AWS Configuration)
+4.[AWS Configuration](#AWS-Configuration)
 
 ## How to Use
 This session describe how to use this code
