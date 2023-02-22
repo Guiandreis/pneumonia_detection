@@ -28,6 +28,9 @@ In order to reach the best result, the DLNN trained using the [kaggle Chest X-Ra
 
 4.[AWS Configuration](#AWS-Configuration)
 
+5.[Future Implementation](#Future-Implementation)
+
+
 ## How to Use
 This session describe how to use this code
 
@@ -40,7 +43,8 @@ This session describes the Neural Network Development
 ## AWS Configuration
 This session describes the required AWS configuration as well as function for each component.
 
-
+## Future Implementation
+This session describes the future implementation for this project.
 
 
 
