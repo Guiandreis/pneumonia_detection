@@ -26,6 +26,37 @@ In order to reach the best result, the DLNN trained using the [kaggle Chest X-Ra
 
 ## Example
 test1
+kk
+kkk
+k
+k
+kk
+k
+k
+k
+k
+k
+k
+k
+k
+k
+k
+k
+k
+
+k
+k
+k
+kk
+k
+k
+k
+k
+kk
+k
+k
+k
+
 
 ## Example2
 test
