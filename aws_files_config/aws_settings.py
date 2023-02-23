@@ -1,4 +1,4 @@
-def set_params_as_dict():
+def ec2_configuration_dict():
     '''Function of input parameter to determine instance name, id, type
     key pair, region etc...'''
     
@@ -14,7 +14,7 @@ def set_params_as_dict():
 
     return dict_create_instance
 
-def input_paths_and_names():
+def s3_configuration_dict():
     '''This function is the input data for all the info and paths'''
 
     dict_input_info = {
@@ -29,8 +29,8 @@ def input_paths_and_names():
 def configurations():
     '''This is the main function of as settings'''
     
-    dict_input_info_s3 = input_paths_and_names()
+    dict_input_info_s3 = s3_configuration_dict()
 
-    dict_input_info_ec2 = set_params_as_dict()  
+    dict_input_info_ec2 = ec2_configuration_dict()  
     
     return dict_input_info_s3, dict_input_info_ec2

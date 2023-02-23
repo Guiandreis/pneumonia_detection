@@ -39,8 +39,6 @@ def exam_process(s3_client, client_paramiko, sftp, bucket_name , file_path, name
     client_paramiko.exec_command('rm -rf /home/ubuntu/pneumonia/output')
     client_paramiko.exec_command('mkdir /home/ubuntu/pneumonia/output')
     stdout.channel.recv_exit_status()
-    print(stderr.read().decode())
-    print('ec2_path_output',ec2_path_output)
     output_json = sftp.open(ec2_path_output)
     output = output_json.read()
 

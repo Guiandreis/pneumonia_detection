@@ -47,7 +47,6 @@ def list_instances_and_start_selected(ec2_resource, INSTANCE_NAME):
             there_is_instance = True
             state = instance.state['Name']
             correct_instance = instance
-            print('state',state)
             #if is running continue
             if state == 'running':
                 return there_is_instance, correct_instance
