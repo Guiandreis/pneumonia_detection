@@ -4,7 +4,8 @@
 ## Summary
 **Tools: Python, Flask, Pytorch, AWS EC2, AWS S3, Paramiko**
 
-Developed a deep learning neural network (DLNN) that classifies Chest X-Rays images within normal and pneumonia categories to help medical diagnosis in time and assertiveness.
+Developed a deep learning neural network (DLNN) that classifies Chest X-Rays images within normal and pneumonia categories to help medical diagnosis in time and assertiveness, using Flask for API connections, AWS EC2 for processing and AWS S3 for data storage.
+
 Developed a FLASK API to serve as the interface with users.
 
 <p align="center">
@@ -41,7 +42,7 @@ This session describe the Exploratory Data Analisys performed
 This session describes the Neural Network Development
 
 ## AWS Configuration
-This session describes the required AWS configuration as well as function for each component.
+The AWS configuration needs to be setted at the [aws_settings file](aws_files_config/aws_settings.py), 
 
 ## Future Implementation
 This session describes the future implementation for this project.
