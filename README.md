@@ -7,7 +7,6 @@
 Developed a deep learning neural network (DLNN) that classifies Chest X-Rays images within normal and pneumonia categories to help medical diagnosis in time and assertiveness, using Flask for API connections, AWS EC2 for processing and AWS S3 for data storage.
 
 Developed a FLASK API to serve as the interface with users.
-
 <p align="center">
   <img src="images_read_me/flask_api2.PNG" width="450" height="250">
   <img src="images_read_me/result_api2.PNG" width="450" height="250">
