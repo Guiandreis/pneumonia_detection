@@ -46,13 +46,13 @@ The IDE used to construct the CNN was Google Colaboratory web IDE with GPU as ha
 The CNN model was trained using the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)
 
 <p align="center">
-  <img src="images_read_me/confusion_matrix4.png" width="425" height="450">
-  <img src="images_read_me/batch_result2.png" width="425" height="450">
+  <img src="images_read_me/CNN_model.PNG" width="300" height="300">
+  <img src="images_read_me/input_image.png" width="300" height="300">
 </p>
 
 <p align="center">
-  <img src="images_read_me/confusion_matrix4.png" width="425" height="450">
-  <img src="images_read_me/batch_result2.png" width="425" height="450">
+  <img src="images_read_me/train_loss.PNG" width="300" height="300">
+  <img src="images_read_me/vall_loss.PNG" width="300" height="300">
 </p>
 
 <p align="center">
