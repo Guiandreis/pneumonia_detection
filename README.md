@@ -34,14 +34,15 @@ The CNN model was trained using the [kaggle Chest X-Ray pneumonia dataset](https
 
 
 ## How to Use
-Clone this git repo, configure your AWS access in your development environment (VSCODE for example), configure your aws settings in the AWS Configuration Content, run the flask_app.py file using python > 3.8.10 and on your web browser enter your local host (usually http://127.0.0.1:5000/) wait until the page load and follow the instructions.
+Clone this git repo, choose if you want to run using local machine or to create a new reusable machine on AWS EC2. IF you select AWS, configure your AWS credentials in your development environment (VSCODE for example), configure your aws settings as explained in AWS Configuration Content, run the flask_app.py file using python > 3.8.10 and on your web browser enter your local host (usually http://127.0.0.1:5000/) wait until the page load and follow the instructions.
+In your first run, it might take a few minutes to run because the it will automatically be created a new S3 bucket, a new EC2 instance and all the requirements libraries will be installed as well as all the files will be transfered.
 
 ## Exploratory Data Analisys
 This session describe the Exploratory Data Analisys performed
 
-## Neural Network Development
+## Convolutional Neural Network Development
 
-The IDE used to construct the CNN was Google Colaboratory web IDE with GPU as hardware acelerator. The model as developed Pytorch library and the the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia). The figures below show the model summary, a few images of the dataset, results of the train accuracy curve, validation accuracy curve, the confusion matrix and a batch of the test dataset used to train the network.
+The IDE used to construct the CNN was Google Colaboratory web IDE with GPU as hardware acelerator. The model as developed Pytorch library and the the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia). The figures below show the model summary, a few images of the dataset, results of the train loss curve, validation loss curve, the confusion matrix and a batch of the test dataset used to train the network.
 
 The CNN model was trained using the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)
 
@@ -68,7 +69,6 @@ The CNN model was trained using the [kaggle Chest X-Ray pneumonia dataset](https
   
   
 ## Future Implementation
-This session describes the future implementation for this project.
-
+For futur implementation of this project, GradCam might be an interesting tool to help physicians in order to have a better understanting of what the CNN is detecting in the image, therefore the raising their trust on the usage of the CNN.
 
 
