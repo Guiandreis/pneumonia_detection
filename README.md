@@ -42,7 +42,7 @@ This session describe the Exploratory Data Analisys performed
 
 ## Convolutional Neural Network Development
 
-The IDE used to construct the CNN was Google Colaboratory web IDE with GPU as hardware acelerator. The model as developed Pytorch library and the the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia). The figures below show the model summary, a few images of the dataset, results of the train loss curve, validation loss curve, the confusion matrix and a batch of the test dataset used to train the network.
+The IDE used to [construct the CNN](model_development/Pneumonia_CNN.ipynb) was Google Colaboratory web IDE with GPU as hardware acelerator. The model as developed Pytorch library and the the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia). The figures below show the model summary, a few images of the dataset, results of the train loss curve, validation loss curve, the confusion matrix and a batch of the test dataset used to train the network.
 
 The CNN model was trained using the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)
 
