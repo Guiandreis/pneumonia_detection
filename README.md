@@ -9,8 +9,8 @@ Developed a Convolutional Neural Network (CNN) that classifies Chest X-Rays imag
 
 Developed a FLASK API to serve as the interface with users.
 <p align="center">
-  <img src="images_read_me/flask_api2.PNG" width="425" height="250">
-  <img src="images_read_me/result_api2.PNG" width="425" height="250">
+  <img src="images_read_me/flask_api2.PNG" width="415" height="250">
+  <img src="images_read_me/result_api2.PNG" width="415" height="250">
 </p>
  
 The CNN model was trained using the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia). The figures below show the results of the confusion matrix and a batch of the test dataset used to train the network.
