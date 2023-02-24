@@ -9,15 +9,15 @@ Developed a Convolutional Neural Network (CNN) that classifies Chest X-Rays imag
 
 Developed a FLASK API to serve as the interface with users.
 <p align="center">
-  <img src="images_read_me/flask_api2.PNG" width="415" height="250">
-  <img src="images_read_me/result_api2.PNG" width="415" height="250">
+  <img src="images_read_me/flask_api2.PNG" width="350" height="250">
+  <img src="images_read_me/result_api2.PNG" width="350" height="250">
 </p>
  
 The CNN model was trained using the [kaggle Chest X-Ray pneumonia dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia). The figures below show the results of the confusion matrix and a batch of the test dataset used to train the network.
 
 <p align="center">
-  <img src="images_read_me/confusion_matrix4.png" width="425" height="450">
-  <img src="images_read_me/batch_result2.png" width="425" height="450">
+  <img src="images_read_me/confusion_matrix4.png" width="350" height="450">
+  <img src="images_read_me/batch_result2.png" width="350" height="450">
 </p>
 
 # Table of contents
@@ -57,8 +57,8 @@ The CNN model was trained using the [kaggle Chest X-Ray pneumonia dataset](https
 </p>
 
 <p align="center">
-  <img src="images_read_me/confusion_matrix4.png" width="425" height="450">
-  <img src="images_read_me/batch_result2.png" width="425" height="450">
+  <img src="images_read_me/confusion_matrix4.png" width="350" height="450">
+  <img src="images_read_me/batch_result2.png" width="350" height="450">
 </p>
 
 ## AWS Configuration
