@@ -41,7 +41,7 @@ In your first run, it might take a few minutes to run because the it will automa
 The exploratory data analisys for this project consist mainly in verifying the data distribuition between both normal and pneumonia classes. The image bellow show that for the training dataset the ratio from normal to pneumonia is 0.34:1 ratio, for the validation dataset is 1:1, for the test dataset is : 0.6 and for the total dataset is 0.37:1.
 
 <p align="center">
-  <img src="images_read_me/data_counting.png" width="450" height="250">
+  <img src="images_read_me/data_counting.png" width="550" height="450">
 </p>
 
 ## Convolutional Neural Network Development
