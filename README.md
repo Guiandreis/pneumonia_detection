@@ -34,8 +34,15 @@ The CNN model was trained using the [kaggle Chest X-Ray pneumonia dataset](https
 
 
 ## How to Use
-Clone this git repo, choose if you want to run using local machine or to create a new reusable machine on AWS EC2. IF you select AWS, configure your AWS credentials in your development environment (VSCODE for example), configure your aws settings as explained in AWS Configuration Content, run the flask_app.py file using python > 3.8.10 and on your web browser enter your local host (usually http://127.0.0.1:5000/) wait until the page load and follow the instructions.
-In your first run, it might take a few minutes to run because the it will automatically be created a new S3 bucket, a new EC2 instance and all the requirements libraries will be installed as well as all the files will be transfered.
+Clone this git repo, create a new venv and install using pip install -r requirements.txt the requirements inside requirements.txt
+
+Choose if you want to run using local machine or to create a new and reusable machine on AWS EC2. 
+**If you select to run locally, set the variable process in the flask_app.py to 'local'**. Run the flask_app.py file using python > 3.8.10 and on your web browser enter your local host (usually http://127.0.0.1:5000/) wait until the page load and follow the instructions shown. The exam will be processed locally and the output will be saved in the output folder in a json file as well as be shown as result on the FLASK API
+
+**IF you select process variable as AWS**, configure your AWS credentials in your development environment (VSCODE for example), configure your aws settings as explained in AWS Configuration Content, run the flask_app.py file using python > 3.8.10 and on your web browser enter your local host (usually http://127.0.0.1:5000/) wait until the page load and follow the instructions.
+In your first run, it might take a few minutes to run because the it will **automatically be created a new S3 bucket, a new EC2 instance and all the requirements libraries will be installed as well as all the files for processing will be transfered from S3 to EC2 as well as the exam process.** After the first run, the EC2 instance configured will be stopped and automatically initialized for every new request of exam processing without the need of any new configuration.
+For every request of exam process the input image will be read from your local machine, stored in your S3 bucket inside the folder *input_folder* processed by the EC2 instance and the result will be save in your S3 folder *output_folder* as a json file as well as be shown as result on the FLASK API.
+
 
 ## Exploratory Data Analisys
 The exploratory data analisys for this project consist mainly in verifying the data distribuition between both normal and pneumonia classes. The image bellow show that for the training dataset the ratio from normal to pneumonia is 0.34:1 ratio, for the validation dataset is 1:1, for the test dataset is : 0.6 and for the total dataset is 0.37:1.
