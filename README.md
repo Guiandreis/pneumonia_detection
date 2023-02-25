@@ -38,7 +38,11 @@ Clone this git repo, choose if you want to run using local machine or to create 
 In your first run, it might take a few minutes to run because the it will automatically be created a new S3 bucket, a new EC2 instance and all the requirements libraries will be installed as well as all the files will be transfered.
 
 ## Exploratory Data Analisys
-This session describe the Exploratory Data Analisys performed
+The exploratory data analisys for this project consist mainly in verifying the data distribuition between both normal and pneumonia classes. The image bellow show that for the training dataset the ratio from normal to pneumonia is 0.34:1 ratio, for the validation dataset is 1:1, for the test dataset is : 0.6 and for the total dataset is 0.37:1.
+
+<p align="center">
+  <img src="images_read_me/data_counting.png" width="350" height="450">
+</p>
 
 ## Convolutional Neural Network Development
 
