@@ -4,6 +4,7 @@ import paramiko
 import time
 import aws_files_config.aws_settings as aws_settings
 
+
 def find_or_create_key_pair_locally(ec2_client, KEY_PAIR_NAME):
     '''Function to find or create new key_pair if it doesnt exists locally'''
 

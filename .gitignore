@@ -1,0 +1,9 @@
+.pyenv
+.pyenv/
+.cache
+
+.landscape
+.vscode-server
+
+.venv/
+.venv
