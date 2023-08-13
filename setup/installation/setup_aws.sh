@@ -33,11 +33,28 @@ configure() {
     echo 'AWS_DEFAULT_REGION not set. Exiting'
     exit 1
   fi
+
+  aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile "$AWS_PROFILE_NAME"
+  aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile "$AWS_PROFILE_NAME"
+  aws configure set region "$AWS_DEFAULT_REGION" --profile "$AWS_PROFILE_NAME"
+
+  echo "aws set up with profile $AWS_PROFILE_NAME"
 }
 
-aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile "$AWS_PROFILE_NAME"
-aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile "$AWS_PROFILE_NAME"
-aws configure set region "$AWS_DEFAULT_REGION" --profile "$AWS_PROFILE_NAME"
+# If REMOVE_CREDENTIALS is set only clear the credentials file and exit
+if [ ! -z $REMOVE_AWS_CREDENTIALS ]; then
+  echo "Removing $AWS_PROFILE_NAME credentials from $HOME/.aws/credentials and $HOME/.aws/config"
+  [ -f $AWS_CREDENTIALS_FILE ] && sed -i -e "/\[$AWS_PROFILE_NAME\]/,+2d" $AWS_CREDENTIALS_FILE
+  [ -f $AWS_CONFIG_FILE ] && sed -i -e "/\[profile $AWS_PROFILE_NAME\]/,+1d" $HOME/.aws/config
+  exit 0
+fi
 
-echo "aws set up with profile $AWS_PROFILE_NAME"
+# Check if aws CLI is not currently available
+if ! command -v aws &> /dev/null; then
+  install
+else
+  echo "aws CLI installation found. Skipping install."
+fi
 
+# Set up credentials
+configure
