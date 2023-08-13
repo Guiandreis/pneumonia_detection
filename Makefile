@@ -17,8 +17,7 @@ pyenv:
 	@eval "$(pyenv init -)"
 	@pyenv install -s $(PYTHON_VERSION)
 	@pyenv local $(PYTHON_VERSION)
-
-
+	
 venv/bin/activate: pyenv requirements
 	@echo "Using $(shell python -V)"
 ifeq ($(COPY_VENV), true)

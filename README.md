@@ -1,5 +1,9 @@
 
-# Project 1: Chest X-ray Pneumonia Classifier
+# Project 1: Chest X-ray Pneumonia Classifier PROJECT UNDER REFACTORING
+
+## INSTALLATION WSL 
+GO TO nano ~/.bashrc and add 
+export PATH=$(PYENV_ROOT)/bin:$(PATH)
 
 ## Summary
 
