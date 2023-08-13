@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <title>Example HTML File</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+      }
+
+      h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+      }
+
+      p {
+        font-size: 18px;
+        margin-bottom: 20px;
+      }
+
+      input[type="file"] {
+        margin-bottom: 20px;
+        padding: 10px;
+        font-size: 18px;
+      }
+
+      .submit-input {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 18px;
+        margin-top: 20px;
+      }
+
+      .submit-input:hover {
+        background-color: #3e8e41;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome to my pneumonia detector</h1>
+      <p>This is a portfolio project only and should not be used in real 
+        file. In case of pneumonia simptomns please consult a doctor.</p>
+      <p>To use this file, simply follow the instructions below:</p>
+      <ul>
+        <li>Step 1: Choose a Chest x-ray file to submit</li>  
+        <li>Step 2: Click the "Upload Image" button</li>
+        <li>Step 3: Wait for the file to be processed</li>
+      </ul>
+      <form action="/image" method="post" enctype="multipart/form-data">
+        <input type="file" id="input-file" name="image">
+        <input type="submit" value="Upload Image" class="submit-input">
+      </form>
+    </div>
+  </body>
+</html>
