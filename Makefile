@@ -15,6 +15,7 @@ pyenv:
 	@export PYENV_ROOT=$(PYENV_ROOT)
 	@bash ./setup/installation/setup_pyenv.sh
 	@export PATH=$(PYENV_ROOT)/bin:$(PATH)
+	@export PATH=$(PYENV_ROOT)/bin:$(PATH)
 	@eval "$(pyenv init -)"
 	@pyenv install -s $(PYTHON_VERSION)
 	@pyenv local $(PYTHON_VERSION)
@@ -41,6 +42,7 @@ ifeq ($(AWS),true)
 	@echo "entrou aws"
 	@bash ./setup/installation/setup_aws.sh
 	@bash ./setup/installation/setup_s3.sh
+	@bash ./setup/installation/setup_ec2.sh
 
 
 endif

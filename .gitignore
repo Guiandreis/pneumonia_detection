@@ -7,3 +7,5 @@
 
 .venv/
 .venv
+
+KEY_PAIR_NAME.pem
