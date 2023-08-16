@@ -42,7 +42,7 @@ ifeq ($(AWS),true)
 	@echo "entrou aws"
 	@bash ./setup/installation/setup_aws.sh
 	@bash ./setup/installation/setup_s3.sh
-	@bash ./setup/installation/setup_ec2.sh
+	#@bash ./setup/installation/setup_ec2.sh
 
 
 endif
